@@ -136,6 +136,7 @@
     gopls
     python3
     yarn
+    vscode
     unzip
     zip
     fastfetch
