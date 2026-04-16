@@ -1,36 +1,28 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  imports = [
+    inputs.kickstart-nixvim.homeManagerModules.default
+  ];
+
 # Home Manager needs a bit of information about you and the paths it should
 # manage.
   home.username = "shaheer";
   home.homeDirectory = "/home/shaheer";
 
   programs.zsh = {
-
     enable = true;
-
-    autosuggestion.enable = true; # This provides the inline ghost text
-
-      syntaxHighlighting.enable = true; # Highly recommended for the "Kali" feel
-
-      oh-my-zsh = {
-
-        enable = true;
-
-        plugins = [ "git" "sudo" ];
-
-        theme = "robbyrussell"; # Or leave blank if using p10k
-
-      };
-
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" "sudo" ];
+      theme = "robbyrussell";
+    };
     initContent = ''
-
       bindkey '^f' vi-forward-word
-
       '';
-
-  };
+  };  # <-- this closing brace is missing
 
   programs.git = {
     enable = true;
@@ -49,16 +41,24 @@
     };
   };
 
-  programs.neovim.enable = true;
-  xdg.configFile."nvim" = {
-    source = ./dotfiles/nvim;
-    recursive = true;
+
+  programs.nixvim.enable = true;
+
+  programs.gpg = {
+    enable = true;
+    homedir = "/home/shaheer/.gnupg"; # Matches your existing setup
   };
+
+services.gpg-agent = {
+  enable = true;
+  pinentryPackage = pkgs.pinentry-qt;   # ← replaces pinentry.package
+  defaultCacheTtl = 3600;
+  maxCacheTtl = 86400;
+  enableSshSupport = true;
+};
 
 # 2. Set environment variables so SSH knows to use KDE for the prompt
   home.sessionVariables = {
-    SSH_ASKPASS = "${pkgs.kdePackages.ksshaskpass}/bin/ksshaskpass";
-    SSH_ASKPASS_REQUIRE = "prefer";
   };
 
 programs.ssh = {
@@ -74,9 +74,6 @@ programs.ssh = {
   services.ssh-agent.enable = true;
 
   home.packages = with pkgs; [
-    kdePackages.kwalletmanager # GUI to manage your secrets
-      kdePackages.ksshaskpass    # The bridge between SSH and KWallet
-      kdePackages.kate
       thunderbird
 
 # # It is sometimes useful to fine-tune packages, for example, by applying

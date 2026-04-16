@@ -1,10 +1,15 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = false;
@@ -16,7 +21,25 @@
     pkiBundle = "/var/lib/sbctl";
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  programs.niri.enable = true;
+
+  programs.xwayland.enable = true;
+
+  # Optional: Set Niri as the default session if using a Display Manager
+  services.displayManager.defaultSession = "niri";
+
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "${pkgs.niri}/bin/niri-session";
+      user = "shaheer";
+    };
+  };
+
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -44,20 +67,6 @@
     LC_PAPER = "en_IN";
     LC_TELEPHONE = "en_IN";
     LC_TIME = "en_IN";
-  };
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
   };
 
   hardware.bluetooth.enable = true;
@@ -90,16 +99,12 @@
   users.users.shaheer = {
     isNormalUser = true;
     description = "shaheer";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     shell = pkgs.zsh;
   };
-  
-  # Enable the KWallet PAM module
-  security.pam.services.sddm.kwallet.enable = true;
-  security.pam.services.login.kwallet.enable = true;
-
-  # Ensure the wallet package is available for the system
-  security.pam.services.sddm.kwallet.package = pkgs.kdePackages.kwallet-pam;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -110,6 +115,10 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    alacritty # your terminal keybind uses it
+    fuzzel
+    waybar # or any bar fuzzel       # app launcher (or rofi-wayland)
+    swww # wallpaper daemon
     vim
     wget
     git
@@ -148,6 +157,9 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
+
+    # Keep this empty or remove pinentryPackage here
+    # so Home Manager's pinentry-kwallet takes over.
   };
 
   # List services that you want to enable:

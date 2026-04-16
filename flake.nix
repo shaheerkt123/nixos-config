@@ -15,8 +15,9 @@
     };
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
-    stylix.url = "github:danth/stylix";
+    # stylix.url = "github:danth/stylix";
     prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
+    kickstart-nixvim.url = "github:JMartJonesy/kickstart.nixvim";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
@@ -24,8 +25,8 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./configuration.nix
-        ./theme.nix
-        inputs.stylix.nixosModules.stylix
+        # ./theme.nix
+        # inputs.stylix.nixosModules.stylix
         inputs.home-manager.nixosModules.default
         inputs.lanzaboote.nixosModules.lanzaboote
         {
