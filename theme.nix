@@ -1,29 +1,51 @@
-{ pkgs, ... }: {
-  stylix = {
+{ pkgs, config, ... }:
+
+{
+  # 1. Force GTK to use dark mode
+  gtk = {
     enable = true;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
-    image = ./wallpapers/Wind.png;
-    polarity = "dark";
-
-    fonts = {
-      monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
-      };
-      sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Sans";
-      };
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
     };
-# Inside theme.nix
-    targets = {
-      gtk.enable = true;
-      qt = {
-        enable = true;
-      };
+    gtk4.theme = null; # silence gtk4 theme deprecation warning
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
     };
+    cursorTheme = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 24;
+    };
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
+    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
+  };
 
-# hyprland.enable = true;
-# waybar.enable = true;
+  home.pointerCursor = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+    size = 24;
+    gtk.enable = true;
+  };
+
+  # 2. The magic "Dark Mode" switch for modern Libadwaita/Gnome apps
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+  };
+
+  # 3. Make Qt apps (OBS, VLC, etc.) look like GTK
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk3";
+    style.name = "adwaita-dark";
+  };
+
+  home.sessionVariables = {
+    GTK_THEME = "Adwaita-dark";
+    COLOR_SCHEME = "prefer-dark";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 }

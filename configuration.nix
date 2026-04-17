@@ -25,6 +25,8 @@
 
   programs.xwayland.enable = true;
 
+programs.dconf.enable = true;
+
   # Optional: Set Niri as the default session if using a Display Manager
   services.displayManager.defaultSession = "niri";
 
@@ -118,7 +120,7 @@
     alacritty # your terminal keybind uses it
     fuzzel
     waybar # or any bar fuzzel       # app launcher (or rofi-wayland)
-    swww # wallpaper daemon
+    awww # wallpaper daemon
     vim
     wget
     git
@@ -136,7 +138,8 @@
     kdePackages.partitionmanager
     discord
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.prismlauncher-cracked.packages.${pkgs.system}.default
+    zettlr 
+    neovim
     bitwarden-desktop
     htop
     gcc
@@ -149,6 +152,12 @@
     unzip
     zip
     fastfetch
+    (prismlauncher.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace launcher/ui/pages/global/AccountListPage.cpp \
+          --replace-fail 'm_ui->addOfflineBtn->setEnabled(false);' 'm_ui->addOfflineBtn->setEnabled(true);'
+      '';
+    }))
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
