@@ -160,6 +160,21 @@ programs.dconf.enable = true;
     }))
   ];
 
+fonts.packages = with pkgs; [
+  # The most common set for Waybar icons
+  nerd-fonts.symbols-only 
+  # Or a specific font if you prefer (e.g., JetBrainsMono)
+  nerd-fonts.jetbrains-mono
+];
+
+fonts.fontconfig = {
+  enable = true;
+  defaultFonts = {
+    monospace = [ "JetBrainsMono Nerd Font" "Noto Color Emoji" ];
+    sansSerif = [ "DejaVu Sans" "Noto Color Emoji" ];
+  };
+};
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   programs.mtr.enable = true;
