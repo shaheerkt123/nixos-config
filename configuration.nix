@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -25,18 +24,22 @@
 
   programs.xwayland.enable = true;
 
-programs.dconf.enable = true;
+  programs.dconf.enable = true;
 
-  # Optional: Set Niri as the default session if using a Display Manager
+  services.dbus.enable = true;
+
   services.displayManager.defaultSession = "niri";
 
-  services.greetd = {
-    enable = true;
-    settings.default_session = {
-      command = "${pkgs.niri}/bin/niri-session";
-      user = "shaheer";
+services.greetd = {
+  enable = true;
+  settings = {
+    default_session = {
+      # This starts the TUI login screen
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri";
+      user = "greeter";
     };
   };
+};
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -73,6 +76,11 @@ programs.dconf.enable = true;
 
   hardware.bluetooth.enable = true;
 
+hardware.graphics = {
+  enable = true;
+  enable32Bit = true; # Necessary for many older game libraries
+};
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -108,29 +116,36 @@ programs.dconf.enable = true;
     shell = pkgs.zsh;
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+
+# Enable the Polkit service itself
+  security.polkit.enable = true;
+
   environment.systemPackages = with pkgs; [
-    alacritty # your terminal keybind uses it
+    alacritty # terminal
     fuzzel
-    waybar # or any bar fuzzel       # app launcher (or rofi-wayland)
+    waybar
+    xwayland-satellite
+    tuigreet
     awww # wallpaper daemon
     vim
     wget
     git
+    thunderbird
     cargo
-    jdk25
-    baobab
+    baobab # disk analyzer
     rustc
     gcc
     lf
+    yazi
+    thunar # file manager
     tree
+    gvfs # for mounting USBs
+    loupe # image viewer
     zsh-syntax-highlighting
     zsh-autosuggestions
     fzf
@@ -151,13 +166,9 @@ programs.dconf.enable = true;
     vscode
     unzip
     zip
+    jdk25
+    inputs.prismlauncher-cracked.packages.${pkgs.system}.default
     fastfetch
-    (prismlauncher.overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        substituteInPlace launcher/ui/pages/global/AccountListPage.cpp \
-          --replace-fail 'm_ui->addOfflineBtn->setEnabled(false);' 'm_ui->addOfflineBtn->setEnabled(true);'
-      '';
-    }))
   ];
 
 fonts.packages = with pkgs; [

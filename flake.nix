@@ -14,9 +14,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    kickstart-nix-nvim.url = "github:nix-community/kickstart-nix.nvim";
     zen-browser.url = "github:youwen5/zen-browser-flake";
+    prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
     stylix.url = "github:danth/stylix";
-    kickstart-nixvim.url = "github:JMartJonesy/kickstart.nixvim";
   };
 
   outputs =
