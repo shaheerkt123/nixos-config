@@ -1,51 +1,45 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 
 {
-  # 1. Force GTK to use dark mode
-  gtk = {
+  stylix = {
     enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
+    image = ./wallpapers/Wind.png;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    polarity = "dark";
+
+    opacity = {
+      applications = 1.0;
+      terminal = 0.9;
+      desktop = 1.0;
+      popups = 1.0;
     };
-    gtk4.theme = null; # silence gtk4 theme deprecation warning
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-    cursorTheme = {
-      name = "Adwaita";
+
+    cursor = {
       package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
       size = 24;
     };
-    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
-    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
-  };
 
-  home.pointerCursor = {
-    name = "Adwaita";
-    package = pkgs.adwaita-icon-theme;
-    size = 24;
-    gtk.enable = true;
-  };
-
-  # 2. The magic "Dark Mode" switch for modern Libadwaita/Gnome apps
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
+    fonts = {
+      monospace = {
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
+      };
+      sansSerif = {
+        package = pkgs.dejavu_fonts;
+        name = "DejaVu Sans";
+      };
+      serif = {
+        package = pkgs.dejavu_fonts;
+        name = "DejaVu Serif";
+      };
+      
+      sizes = {
+        applications = 12;
+        terminal = 12;
+        desktop = 10;
+        popups = 10;
+      };
     };
-  };
-
-  # 3. Make Qt apps (OBS, VLC, etc.) look like GTK
-  qt = {
-    enable = true;
-    platformTheme.name = "gtk3";
-    style.name = "adwaita-dark";
-  };
-
-  home.sessionVariables = {
-    GTK_THEME = "Adwaita-dark";
-    COLOR_SCHEME = "prefer-dark";
-    ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 }

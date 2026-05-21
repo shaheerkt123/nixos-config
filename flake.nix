@@ -14,29 +14,33 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    kickstart-nix-nvim.url = "github:nix-community/kickstart-nix.nvim";
+    kickstart-nix-nvim.url = "github:shaheerkt123/nixvim-config";
     zen-browser.url = "github:youwen5/zen-browser-flake";
     prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
     stylix.url = "github:danth/stylix";
   };
 
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    { nixpkgs, ... }@inputs:
     {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
-          # ./theme.nix
-          # inputs.stylix.nixosModules.stylix
+          ./theme.nix
+          inputs.stylix.nixosModules.stylix
           inputs.home-manager.nixosModules.default
           inputs.lanzaboote.nixosModules.lanzaboote
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-            home-manager.users.shaheer = import ./home.nix;
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              users.shaheer = {
+                imports = [ ./home.nix ];
+              };
+              extraSpecialArgs = { inherit inputs; };
+            };
           }
         ];
       };

@@ -1,19 +1,16 @@
 {
   config,
-    pkgs,
-    inputs,
-    ...
+  pkgs,
+  inputs,
+  ...
 }:
 
 {
-  imports = [
-    ./theme.nix
-  ];
-
-# Home Manager needs a bit of information about you and the paths it should
-# manage.
   home.username = "shaheer";
   home.homeDirectory = "/home/shaheer";
+  home.stateVersion = "25.11";
+
+  programs.home-manager.enable = true;
 
   programs.zsh = {
     enable = true;
@@ -21,88 +18,139 @@
     syntaxHighlighting.enable = true;
     oh-my-zsh = {
       enable = true;
-      plugins = [
-        "git"
-          "sudo"
-      ];
+      plugins = [ "git" "sudo" ];
       theme = "robbyrussell";
     };
     initContent = ''
       bindkey '^f' vi-forward-word
-      '';
+    '';
   };
 
   programs.git = {
     enable = true;
-    settings = {
-      user = {
-        name = "shaheer";
-        email = "shaheerkt1234@gmail.com";
-      };
+    userName = "shaheer";
+    userEmail = "shaheerkt1234@gmail.com";
+    extraConfig = {
       init.defaultBranch = "main";
       commit.gpgSign = true;
-      gpg.format = "openpgp";
+      gpg.format = "ssh";
+      gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
     };
     signing = {
-      key = "C475BEB786DF2FC1";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPGyojGoNze8VGrR/JqwZO7CJxoJt7KpTgYfy8ysAJ82";
       signByDefault = true;
     };
   };
 
   programs.gpg.enable = true;
-
   services.gpg-agent = {
     enable = true;
     pinentry.package = pkgs.pinentry-qt;
     defaultCacheTtl = 3600;
     maxCacheTtl = 86400;
-    enableSshSupport = true; # GPG will handle SSH keys
+    enableSshSupport = false;
   };
 
-# CRITICAL: This MUST be false because gpg-agent is handling SSH
   services.ssh-agent.enable = false;
-
   programs.ssh = {
-    enableDefaultConfig = false;
     enable = true;
     matchBlocks = {
       "*" = {
-        addKeysToAgent = "yes";
+        identityAgent = "~/.bitwarden-ssh-agent.sock";
       };
     };
   };
 
-  home.packages = [
+  services.kdeconnect.enable = true;
+  services.kdeconnect.indicator = true; # Enforces the system tray icon
+
+  home.packages = with pkgs; [
     inputs.kickstart-nix-nvim.packages.${pkgs.system}.default
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.prismlauncher-cracked.packages.${pkgs.system}.default
 
-# # It is sometimes useful to fine-tune packages, for example, by applying
-# # overrides. You can do that directly here, just don't forget the
-# # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-# # fonts?
-# (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+    # Apps
+    mpv
+    thunar
+    discord
+    vscode
+    thunderbird
+    zettlr
+    bitwarden-desktop
+    loupe
+    baobab
 
-# # You can also create simple shell scripts directly inside your
-# # configuration. For example, this adds a command 'my-hello' to your
-# # environment:
-# (pkgs.writeShellScriptBin "my-hello" ''
-#   echo "Hello, ${config.home.username}!"
-# '')
+    # CLI Tools
+    yazi
+    lf
+    fzf
+    htop
+    tree
+    playerctl
+    networkmanagerapplet
+    gemini-cli
+
+    # Development
+    cargo
+    rustc
+    gcc
+    gnumake
+    go
+    gopls
+    python3
+    yarn
+    jdk25
+
+    # Utils
+    xwayland-satellite
+    kdePackages.partitionmanager
   ];
 
-# Home Manager is pretty good at managing dotfiles. The primary way to manage
-# plain files is through 'home.file'.
+  programs.alacritty.enable = true;
+
+  programs.waybar = {
+    enable = true;
+    systemd = {
+      enable = true;
+      target = "niri.service";
+    };
+  };
+
+  programs.fuzzel = {
+    enable = true;
+    settings = {
+      main = {
+        font = "JetBrainsMono Nerd Font:size=12";
+        prompt = "'❯ '";
+        terminal = "${pkgs.alacritty}/bin/alacritty";
+        width = 30;
+        horizontal-pad = 20;
+        vertical-pad = 20;
+        inner-pad = 10;
+        line-height = 25;
+      };
+      colors = {
+        background = "${config.lib.stylix.colors.base00}e6"; # 90% opacity
+        text = "${config.lib.stylix.colors.base05}ff";
+        match = "${config.lib.stylix.colors.base0D}ff";
+        selection = "${config.lib.stylix.colors.base02}ff";
+        selection-text = "${config.lib.stylix.colors.base05}ff";
+        selection-match = "${config.lib.stylix.colors.base0D}ff";
+        border = "${config.lib.stylix.colors.base0D}ff";
+      };
+      border = {
+        width = 2;
+        radius = 15;
+      };
+    };
+  };
+
+  stylix.targets.waybar.enable = false;
+  stylix.targets.fuzzel.enable = false;
+
   home.file = {
     ".config/niri".source = ./dotfiles/niri;
-# # Building this configuration will create a copy of 'dotfiles/screenrc' in
-# # the Nix store. Activating the configuration will then make '~/.screenrc' a
-# # symlink to the Nix store copy.
-# ".screenrc".source = dotfiles/screenrc;
-
-# # You can also set the file content immediately.
-# ".gradle/gradle.properties".text = ''
-#   org.gradle.console=verbose
-#   org.gradle.daemon.idletimeout=3600000
-# '';
+    ".config/waybar".source = ./dotfiles/waybar;
   };
 
   xdg.mimeApps = {
@@ -118,41 +166,14 @@
     };
   };
 
-# Home Manager can also manage your environment variables through
-# 'home.sessionVariables'. These will be explicitly sourced when using a
-# shell provided by Home Manager. If you don't want to manage your shell
-# through Home Manager then you have to manually source 'hm-session-vars.sh'
-# located at either
-#
-#  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-#
-# or
-#
-#  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-#
-# or
-#
-#  /etc/profiles/per-user/shaheer/etc/profile.d/hm-session-vars.sh
-#
   home.sessionVariables = {
     EDITOR = "nvim";
     DEFAULT_BROWSER = "zen";
+    SSH_AUTH_SOCK = "$HOME/.bitwarden-ssh-agent.sock";
     GOPATH = "$HOME/go";
   };
 
   home.sessionPath = [
     "${config.home.homeDirectory}/go/bin"
   ];
-
-# This value determines the Home Manager release that your configuration is
-# compatible with. This helps avoid breakage when a new Home Manager release
-# introduces backwards incompatible changes.
-#
-# You should not change this value, even if you update Home Manager. If you do
-# want to update the value, then make sure to first check the Home Manager
-# release notes.
-  home.stateVersion = "25.11"; # Please read the comment before changing.
-
-# Let Home Manager install and manage itself.
-    programs.home-manager.enable = true;
 }

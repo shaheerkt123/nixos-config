@@ -339,16 +339,16 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1775076991,
-        "narHash": "sha256-XGp7d7wAmwC0I5Y341sIGcqwse9LdQNbiO24GF2nFCU=",
-        "owner": "nix-community",
-        "repo": "kickstart-nix.nvim",
-        "rev": "8da1f2e28271a505a4ce6bf26cae14f331c595d4",
+        "lastModified": 1779370425,
+        "narHash": "sha256-0Uk6kqPyVMsW5GKo5zdN4BrGcGy2sDnOTR5beQ2lQng=",
+        "owner": "shaheerkt123",
+        "repo": "nixvim-config",
+        "rev": "237d4dc72eb1fe920fe55f2ef53748654848a122",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
-        "repo": "kickstart-nix.nvim",
+        "owner": "shaheerkt123",
+        "repo": "nixvim-config",
         "type": "github"
       }
     },
