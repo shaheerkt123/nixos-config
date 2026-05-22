@@ -47,7 +47,6 @@ layout {
 
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "nm-applet" "--indicator"
-spawn-at-startup "bitwarden"
 
 prefer-no-csd
 
@@ -56,6 +55,18 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
+}
+ 
+window-rule {
+    // List all the apps you want to float here:
+    match app-id="pavucontrol"
+    match app-id="blueman-manager"
+    match app-id="nm-connection-editor"
+
+    // Apply the floating rules to all of them at once
+    open-floating true
+    default-column-width { fixed 650; }
+    default-window-height { fixed 550; }
 }
 
 window-rule {
