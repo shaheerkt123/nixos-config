@@ -104,7 +104,13 @@
     # Utils
     xwayland-satellite
     kdePackages.partitionmanager
+    wl-clipboard
   ];
+
+  services.cliphist = {
+    enable = true;
+    systemdTargets = [ "niri.service" ];
+  };
 
   programs.alacritty.enable = true;
 

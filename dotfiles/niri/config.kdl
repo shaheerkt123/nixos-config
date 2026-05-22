@@ -79,6 +79,7 @@ binds {
 
     Mod+T { spawn "alacritty"; }
     Mod+D { spawn "fuzzel"; }
+    Mod+P { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
     Super+Alt+L { spawn "swaylock"; }
     Mod+B { spawn "zen"; }
     Mod+N { spawn "zettlr"; }
