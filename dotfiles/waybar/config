@@ -14,11 +14,20 @@
         "cpu",
         "memory",
         "backlight",
+        "pulseaudio",
         "bluetooth",
         "network",
         "battery",
         "tray"
     ],
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "",
+        "format-icons": {
+            "default": ["", "", " "]
+        },
+        "on-click": "pavucontrol"
+    },
     "backlight": {
         "format": "{icon} {percent}%",
         "format-icons": ["", "", "", "", "", "", "", "", ""],

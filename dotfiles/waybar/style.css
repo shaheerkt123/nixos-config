@@ -35,6 +35,7 @@ window#waybar {
 #cpu,
 #memory,
 #backlight,
+#pulseaudio,
 #bluetooth,
 #network,
 #tray {
@@ -98,6 +99,10 @@ window#waybar {
 #backlight {
     background-color: #f1c40f;
     color: #000000;
+}
+
+#pulseaudio {
+    background-color: #d35400;
 }
 
 #bluetooth {

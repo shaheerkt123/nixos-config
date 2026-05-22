@@ -79,6 +79,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   hardware.bluetooth = {
@@ -103,7 +104,7 @@
   users.users.shaheer = {
     isNormalUser = true;
     description = "shaheer";
-    extraGroups = [ "networkmanager" "wheel" "bluetooth" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "bluetooth" "video" "audio" ];
     shell = pkgs.zsh;
   };
 
@@ -123,6 +124,7 @@
     zip
     fastfetch
     blueman
+    pavucontrol
   ];
 
   programs.mtr.enable = true;
