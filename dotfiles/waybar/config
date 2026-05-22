@@ -13,11 +13,18 @@
     "modules-right": [
         "cpu",
         "memory",
+        "backlight",
         "bluetooth",
         "network",
         "battery",
         "tray"
     ],
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "on-scroll-up": "brightnessctl set 1%+",
+        "on-scroll-down": "brightnessctl set 1%-"
+    },
     "bluetooth": {
         "format": " {status}",
         "format-disabled": "",

@@ -103,7 +103,7 @@
   users.users.shaheer = {
     isNormalUser = true;
     description = "shaheer";
-    extraGroups = [ "networkmanager" "wheel" "bluetooth" ];
+    extraGroups = [ "networkmanager" "wheel" "bluetooth" "video" ];
     shell = pkgs.zsh;
   };
 

@@ -34,6 +34,7 @@ window#waybar {
 #battery,
 #cpu,
 #memory,
+#backlight,
 #bluetooth,
 #network,
 #tray {
@@ -92,6 +93,11 @@ window#waybar {
 
 #memory {
     background-color: #9b59b6;
+}
+
+#backlight {
+    background-color: #f1c40f;
+    color: #000000;
 }
 
 #bluetooth {
