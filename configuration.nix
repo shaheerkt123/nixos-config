@@ -52,6 +52,8 @@
     LC_TIME = "en_IN";
   };
 
+  hardware.enableAllFirmware = true;
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -88,15 +90,18 @@
     settings = {
       General = {
         Experimental = true;
+        AutoEnable = false;
       };
     };
   };
 
+  boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "btusb" "ath10k_pci" ];
 
-# Force loading firmware and fix power management drops
+  # Cleaned up kernel parameters to fix USB timeouts and unknown parameters
   boot.kernelParams = [ 
     "ath10k_core.skip_otp=y" 
+    "btusb.enable_autosuspend=0"
   ];
 
   programs.zsh.enable = true;
@@ -125,6 +130,9 @@
     fastfetch
     blueman
     pavucontrol
+    usbutils
+    pciutils
+    bluez-tools
   ];
 
   programs.mtr.enable = true;
