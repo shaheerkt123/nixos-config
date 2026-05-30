@@ -28,9 +28,11 @@
 
   programs.git = {
     enable = true;
-    userName = "shaheer";
-    userEmail = "shaheerkt1234@gmail.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "shaheerkt";
+        email = "shaheerkt123@users.noreply.github.com";
+      };
       init.defaultBranch = "main";
       commit.gpgSign = true;
       gpg.format = "ssh";
@@ -54,6 +56,7 @@
   services.ssh-agent.enable = false;
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks = {
       "*" = {
         identityAgent = "~/.bitwarden-ssh-agent.sock";
@@ -61,19 +64,21 @@
     };
   };
 
-  services.kdeconnect.enable = true;
-  services.kdeconnect.indicator = true; # Enforces the system tray icon
-
   home.packages = with pkgs; [
-    inputs.kickstart-nix-nvim.packages.${pkgs.system}.default
+    inputs.kickstart-nix-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.prismlauncher-cracked.packages.${pkgs.system}.default
+    inputs.prismlauncher-cracked.packages.${pkgs.stdenv.hostPlatform.system}.default
+    (pkgs.writeShellScriptBin "agy" ''
+     exec ${inputs.llm-agents.packages.${pkgs.system}.antigravity}/bin/antigravity "$@"
+     '')
 
     # Apps
     mpv
     thunar
     discord
-    vscode
+    antigravity
+    opencode
+    qbittorrent
     thunderbird
     zettlr
     bitwarden-desktop
@@ -103,13 +108,32 @@
 
     # Utils
     xwayland-satellite
-    kdePackages.partitionmanager
     wl-clipboard
+    polkit_gnome
+    xhost
   ];
 
   services.cliphist = {
     enable = true;
     systemdTargets = [ "niri.service" ];
+  };
+
+  systemd.user.services.polkit-gnome-authentication-agent-1 = {
+    Unit = {
+      Description = "polkit-gnome-authentication-agent-1";
+      Wants = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
+      RestartSec = 1;
+      TimeoutStopSec = 10;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
   };
 
   programs.alacritty.enable = true;
@@ -118,9 +142,11 @@
     enable = true;
     systemd = {
       enable = true;
-      target = "niri.service";
+      targets = [ "niri.service" ];
     };
   };
+
+  gtk.gtk4.theme = null;
 
   programs.fuzzel = {
     enable = true;

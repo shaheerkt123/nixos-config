@@ -106,6 +106,8 @@
 
   programs.zsh.enable = true;
 
+  systemd.services.systemd-tpm2-setup.enable = false;
+
   users.users.shaheer = {
     isNormalUser = true;
     description = "shaheer";

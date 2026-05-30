@@ -1,6 +1,12 @@
 {
   description = "Nixos config flake";
 
+# configures the binary cache so we don't have to build from source
+  nixConfig = {
+    substituters = "https://cache.numtide.com";
+    trusted-public-keys = "numtide.cacache.org-1:2dBdH9HDoBR837GHVn6g8pQ8Y7k="; # Ensures authenticity
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -14,6 +20,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Add the official Numtide LLM agents flake for antigravity-cli
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
+
     kickstart-nix-nvim.url = "github:shaheerkt123/nixvim-config";
     zen-browser.url = "github:youwen5/zen-browser-flake";
     prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
@@ -21,8 +31,7 @@
   };
 
   outputs =
-    { nixpkgs, ... }@inputs:
-    {
+    { nixpkgs, ... }@inputs: {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [

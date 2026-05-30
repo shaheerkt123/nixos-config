@@ -46,6 +46,7 @@ layout {
 }
 
 spawn-at-startup "xwayland-satellite"
+spawn-at-startup "xhost" "+si:localuser:root"
 spawn-at-startup "nm-applet" "--indicator"
 
 prefer-no-csd
