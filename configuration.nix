@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -30,6 +30,7 @@
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.trusted-users = [ "root" "shaheer" ];
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
@@ -98,7 +99,6 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "btusb" "ath10k_pci" ];
 
-  # Cleaned up kernel parameters to fix USB timeouts and unknown parameters
   boot.kernelParams = [ 
     "ath10k_core.skip_otp=y" 
     "btusb.enable_autosuspend=0"
@@ -116,8 +116,13 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-39.8.10"
+  ];
 
   security.polkit.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
   environment.systemPackages = with pkgs; [
     vim

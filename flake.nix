@@ -3,8 +3,8 @@
 
 # configures the binary cache so we don't have to build from source
   nixConfig = {
-    substituters = "https://cache.numtide.com";
-    trusted-public-keys = "numtide.cacache.org-1:2dBdH9HDoBR837GHVn6g8pQ8Y7k="; # Ensures authenticity
+    extra-substituters = [ "https://cache.numtide.com" ];
+    extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
   };
 
   inputs = {
@@ -30,8 +30,7 @@
     stylix.url = "github:danth/stylix";
   };
 
-  outputs =
-    { nixpkgs, ... }@inputs: {
+  outputs = { nixpkgs, ... }@inputs: {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [

@@ -6,116 +6,205 @@
 }:
 
 {
-  home.username = "shaheer";
-  home.homeDirectory = "/home/shaheer";
-  home.stateVersion = "25.11";
+  programs = {
+    home-manager.enable = true;
 
-  programs.home-manager.enable = true;
-
-  programs.zsh = {
-    enable = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    oh-my-zsh = {
+    zsh = {
       enable = true;
-      plugins = [ "git" "sudo" ];
-      theme = "robbyrussell";
-    };
-    initContent = ''
-      bindkey '^f' vi-forward-word
-    '';
-  };
-
-  programs.git = {
-    enable = true;
-    settings = {
-      user = {
-        name = "shaheerkt";
-        email = "shaheerkt123@users.noreply.github.com";
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      oh-my-zsh = {
+        enable = true;
+        plugins = [
+          "git"
+            "sudo"
+        ];
+        theme = "robbyrussell";
       };
-      init.defaultBranch = "main";
-      commit.gpgSign = true;
-      gpg.format = "ssh";
-      gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+      initContent = ''
+        bindkey '^f' vi-forward-word
+        '';
     };
-    signing = {
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPGyojGoNze8VGrR/JqwZO7CJxoJt7KpTgYfy8ysAJ82";
-      signByDefault = true;
-    };
-  };
 
-  programs.gpg.enable = true;
-  services.gpg-agent = {
-    enable = true;
-    pinentry.package = pkgs.pinentry-qt;
-    defaultCacheTtl = 3600;
-    maxCacheTtl = 86400;
-    enableSshSupport = false;
-  };
-
-  services.ssh-agent.enable = false;
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-    matchBlocks = {
-      "*" = {
-        identityAgent = "~/.bitwarden-ssh-agent.sock";
+    git = {
+      enable = true;
+      settings = {
+        user = {
+          name = "shaheerkt";
+          email = "shaheerkt123@users.noreply.github.com";
+        };
+        init.defaultBranch = "main";
+        commit.gpgSign = true;
+        gpg.format = "ssh";
+        gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+      };
+      signing = {
+        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPGyojGoNze8VGrR/JqwZO7CJxoJt7KpTgYfy8ysAJ82";
+        signByDefault = true;
       };
     };
+
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      settings = {
+        "*" = {
+          identityAgent = "~/.bitwarden-ssh-agent.sock";
+        };
+      };
+    };
+
+    gpg.enable = true;
+
+    nh = {
+      enable = true;
+      clean.enable = true;
+      clean.extraArgs = "--keep-since 4d --keep 3";
+      flake = "/home/shaheer/nixos-config"; # sets NH_OS_FLAKE variable for you
+    };
+
+    alacritty.enable = true;
+
+    waybar = {
+      enable = true;
+      systemd = {
+        enable = true;
+        targets = [ "niri.service" ];
+      };
+    };
+
+    fuzzel = {
+      enable = true;
+      settings = {
+        main = {
+          font = "JetBrainsMono Nerd Font:size=12";
+          prompt = "'❯ '";
+          terminal = "${pkgs.alacritty}/bin/alacritty";
+          width = 30;
+          horizontal-pad = 20;
+          vertical-pad = 20;
+          inner-pad = 10;
+          line-height = 25;
+        };
+        colors = {
+          background = "${config.lib.stylix.colors.base00}e6"; # 90% opacity
+            text = "${config.lib.stylix.colors.base05}ff";
+          match = "${config.lib.stylix.colors.base0D}ff";
+          selection = "${config.lib.stylix.colors.base02}ff";
+          selection-text = "${config.lib.stylix.colors.base05}ff";
+          selection-match = "${config.lib.stylix.colors.base0D}ff";
+          border = "${config.lib.stylix.colors.base0D}ff";
+        };
+        border = {
+          width = 2;
+          radius = 15;
+        };
+      };
+    };
   };
 
-  home.packages = with pkgs; [
-    inputs.kickstart-nix-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.prismlauncher-cracked.packages.${pkgs.stdenv.hostPlatform.system}.default
-    (pkgs.writeShellScriptBin "agy" ''
-     exec ${inputs.llm-agents.packages.${pkgs.system}.antigravity}/bin/antigravity "$@"
-     '')
+  services = {
+    gpg-agent = {
+      enable = true;
+      pinentry.package = pkgs.pinentry-qt;
+      defaultCacheTtl = 3600;
+      maxCacheTtl = 86400;
+      enableSshSupport = false;
+    };
 
-    # Apps
-    mpv
-    thunar
-    discord
-    antigravity
-    opencode
-    qbittorrent
-    thunderbird
-    zettlr
-    bitwarden-desktop
-    loupe
-    baobab
+    ssh-agent.enable = false;
 
-    # CLI Tools
-    yazi
-    lf
-    fzf
-    htop
-    tree
-    playerctl
-    networkmanagerapplet
-    gemini-cli
+    cliphist = {
+      enable = true;
+      systemdTargets = [ "niri.service" ];
+    };
+  };
 
-    # Development
-    cargo
-    rustc
-    gcc
-    gnumake
-    go
-    gopls
-    python3
-    yarn
-    jdk25
+  stylix = {
+    targets.waybar.enable = false;
+    targets.fuzzel.enable = false;
+  };
 
-    # Utils
-    xwayland-satellite
-    wl-clipboard
-    polkit_gnome
-    xhost
-  ];
+  home = {
+    username = "shaheer";
+    homeDirectory = "/home/shaheer";
+    stateVersion = "25.11";
 
-  services.cliphist = {
-    enable = true;
-    systemdTargets = [ "niri.service" ];
+    packages = with pkgs; [
+      inputs.kickstart-nix-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
+        inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+        inputs.prismlauncher-cracked.packages.${pkgs.stdenv.hostPlatform.system}.default
+        (pkgs.writeShellScriptBin "agy" ''
+         exec ${
+         inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
+         }/bin/antigravity "$@"
+         '')
+
+# Apps
+        mpv
+        thunar
+        discord
+        antigravity
+        opencode
+        qbittorrent
+        thunderbird
+        zettlr
+        bitwarden-desktop
+        loupe
+        baobab
+
+# CLI Tools
+        yazi
+        lf
+        fzf
+        htop
+        tree
+        playerctl
+        networkmanagerapplet
+        gemini-cli
+
+# Development
+        cargo
+        rustc
+        gcc
+        gnumake
+        go
+        gopls
+        python3
+        yarn
+        jdk25
+
+# Utils
+        xwayland-satellite
+        wl-clipboard
+        polkit_gnome
+        xhost
+        ];
+
+    file = {
+      ".config/niri".source = ./dotfiles/niri;
+      ".config/waybar".source = ./dotfiles/waybar;
+      ".config/autostart/bitwarden.desktop".text = ''
+        [Desktop Entry]
+        Type=Application
+          Name=Bitwarden
+          Exec=bitwarden
+          Hidden=false
+          NoDisplay=false
+          X-GNOME-Autostart-enabled=true
+          '';
+    };
+
+    sessionVariables = {
+      EDITOR = "nvim";
+      DEFAULT_BROWSER = "zen";
+      SSH_AUTH_SOCK = "$HOME/.bitwarden-ssh-agent.sock";
+      GOPATH = "$HOME/go";
+    };
+
+    sessionPath = [
+      "${config.home.homeDirectory}/go/bin"
+    ];
   };
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
@@ -136,55 +225,6 @@
     };
   };
 
-  programs.alacritty.enable = true;
-
-  programs.waybar = {
-    enable = true;
-    systemd = {
-      enable = true;
-      targets = [ "niri.service" ];
-    };
-  };
-
-  gtk.gtk4.theme = null;
-
-  programs.fuzzel = {
-    enable = true;
-    settings = {
-      main = {
-        font = "JetBrainsMono Nerd Font:size=12";
-        prompt = "'❯ '";
-        terminal = "${pkgs.alacritty}/bin/alacritty";
-        width = 30;
-        horizontal-pad = 20;
-        vertical-pad = 20;
-        inner-pad = 10;
-        line-height = 25;
-      };
-      colors = {
-        background = "${config.lib.stylix.colors.base00}e6"; # 90% opacity
-        text = "${config.lib.stylix.colors.base05}ff";
-        match = "${config.lib.stylix.colors.base0D}ff";
-        selection = "${config.lib.stylix.colors.base02}ff";
-        selection-text = "${config.lib.stylix.colors.base05}ff";
-        selection-match = "${config.lib.stylix.colors.base0D}ff";
-        border = "${config.lib.stylix.colors.base0D}ff";
-      };
-      border = {
-        width = 2;
-        radius = 15;
-      };
-    };
-  };
-
-  stylix.targets.waybar.enable = false;
-  stylix.targets.fuzzel.enable = false;
-
-  home.file = {
-    ".config/niri".source = ./dotfiles/niri;
-    ".config/waybar".source = ./dotfiles/waybar;
-  };
-
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
@@ -197,15 +237,4 @@
       "x-scheme-handler/vscode" = [ "code.desktop" ];
     };
   };
-
-  home.sessionVariables = {
-    EDITOR = "nvim";
-    DEFAULT_BROWSER = "zen";
-    SSH_AUTH_SOCK = "$HOME/.bitwarden-ssh-agent.sock";
-    GOPATH = "$HOME/go";
-  };
-
-  home.sessionPath = [
-    "${config.home.homeDirectory}/go/bin"
-  ];
 }
