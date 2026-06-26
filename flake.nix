@@ -24,6 +24,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs";
 
+    android-nixpkgs.url = "github:tadfisher/android-nixpkgs";
     kickstart-nix-nvim.url = "github:shaheerkt123/nixvim-config";
     zen-browser.url = "github:youwen5/zen-browser-flake";
     prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
@@ -40,6 +41,9 @@
           inputs.home-manager.nixosModules.default
           inputs.lanzaboote.nixosModules.lanzaboote
           {
+            nixpkgs.overlays = [
+              inputs.android-nixpkgs.overlays.default
+            ];
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;

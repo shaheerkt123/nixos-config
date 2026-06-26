@@ -6,6 +6,29 @@
 }:
 
 {
+  imports = [
+    inputs.android-nixpkgs.hmModule
+  ];
+
+  android-sdk = {
+    enable = true;
+
+    path = "${config.xdg.dataHome}/Android"; 
+
+    packages = sdkPkgs: with sdkPkgs; [
+      cmdline-tools-latest
+        build-tools-34-0-0
+        platform-tools
+
+# Only fetch the target platform you are compiling against
+        platforms-android-34 
+
+# Optional: Only include this if you aren't using a physical phone
+        emulator 
+# system-images-android-34-google-apis-x86-64 (If using the emulator)
+    ];
+  };
+
   programs = {
     home-manager.enable = true;
 
@@ -137,7 +160,7 @@
         (pkgs.writeShellScriptBin "agy" ''
          exec ${
          inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
-         }/bin/antigravity "$@"
+         }/bin/agy "$@"
          '')
 
 # Apps
@@ -146,10 +169,11 @@
         discord
         antigravity
         opencode
+        pass
+        keepassxc
         qbittorrent
         thunderbird
         zettlr
-        bitwarden-desktop
         loupe
         baobab
 
@@ -164,6 +188,7 @@
         gemini-cli
 
 # Development
+        android-studio
         cargo
         rustc
         gcc
@@ -179,6 +204,7 @@
         wl-clipboard
         polkit_gnome
         xhost
+        inotify-tools
         ];
 
     file = {
@@ -200,6 +226,8 @@
       DEFAULT_BROWSER = "zen";
       SSH_AUTH_SOCK = "$HOME/.bitwarden-ssh-agent.sock";
       GOPATH = "$HOME/go";
+      ANDROID_HOME = "${config.android-sdk.path}";
+      ANDROID_DATA = "${config.android-sdk.path}";
     };
 
     sessionPath = [
@@ -219,6 +247,30 @@
       Restart = "on-failure";
       RestartSec = 1;
       TimeoutStopSec = 10;
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
+  systemd.user.services.copy-screenshot-to-clipboard = {
+    Unit = {
+      Description = "Copy screenshots to clipboard automatically";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = pkgs.writeShellScript "copy-screenshot" ''
+        mkdir -p "${config.home.homeDirectory}/Pictures/Screenshots"
+        ${pkgs.inotify-tools}/bin/inotifywait -m -e close_write --format '%w%f' "${config.home.homeDirectory}/Pictures/Screenshots" | while read file; do
+          if [ -f "$file" ]; then
+            ${pkgs.wl-clipboard}/bin/wl-copy -t image/png < "$file"
+          fi
+        done
+      '';
+      Restart = "always";
+      RestartSec = 2;
     };
     Install = {
       WantedBy = [ "graphical-session.target" ];

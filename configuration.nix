@@ -5,8 +5,13 @@
     ./hardware-configuration.nix
   ];
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "openssl-1.1.1w"
+  ];
+
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.timeout = 3;
 
   boot.lanzaboote = {
     enable = true;
@@ -31,6 +36,14 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.trusted-users = [ "root" "shaheer" ];
+  nix.settings.http2 = false;
+  nix.settings.build-dir = "/home/nix-build";
+
+  systemd.services.nix-daemon.environment.TMPDIR = "/home/nix-build";
+
+  systemd.tmpfiles.rules = [
+    "d /home/nix-build 0755 root root -"
+  ];
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
@@ -116,9 +129,6 @@
   };
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [
-    "electron-39.8.10"
-  ];
 
   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
