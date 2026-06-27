@@ -121,7 +121,7 @@
   services = {
     gpg-agent = {
       enable = true;
-      pinentry.package = pkgs.pinentry-qt;
+      pinentry.package = pkgs.pinentry-gnome3;
       defaultCacheTtl = 3600;
       maxCacheTtl = 86400;
       enableSshSupport = true;
@@ -169,6 +169,7 @@
         sublime4
         loupe
         baobab
+        seahorse
 
 # CLI Tools
         yazi
