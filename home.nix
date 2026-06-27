@@ -17,15 +17,10 @@
 
     packages = sdkPkgs: with sdkPkgs; [
       cmdline-tools-latest
-        build-tools-34-0-0
+        build-tools-35-0-0
         platform-tools
-
-# Only fetch the target platform you are compiling against
-        platforms-android-34 
-
-# Optional: Only include this if you aren't using a physical phone
+        platforms-android-35
         emulator 
-# system-images-android-34-google-apis-x86-64 (If using the emulator)
     ];
   };
 
@@ -53,27 +48,16 @@
       enable = true;
       settings = {
         user = {
-          name = "shaheerkt";
+          name = "shaheer";
           email = "shaheerkt123@users.noreply.github.com";
         };
         init.defaultBranch = "main";
         commit.gpgSign = true;
-        gpg.format = "ssh";
-        gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+        gpg.format = "openpgp";
       };
       signing = {
-        key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPGyojGoNze8VGrR/JqwZO7CJxoJt7KpTgYfy8ysAJ82";
+        key = "F1CE2C4445FCB25E";
         signByDefault = true;
-      };
-    };
-
-    ssh = {
-      enable = true;
-      enableDefaultConfig = false;
-      settings = {
-        "*" = {
-          identityAgent = "~/.bitwarden-ssh-agent.sock";
-        };
       };
     };
 
@@ -100,27 +84,35 @@
       enable = true;
       settings = {
         main = {
-          font = "JetBrainsMono Nerd Font:size=12";
-          prompt = "'❯ '";
+          font = "JetBrainsMono Nerd Font:size=13";
+          prompt = "' ❯  '";
           terminal = "${pkgs.alacritty}/bin/alacritty";
-          width = 30;
-          horizontal-pad = 20;
+          width = 45;
+          lines = 10;
+          horizontal-pad = 25;
           vertical-pad = 20;
-          inner-pad = 10;
-          line-height = 25;
+          inner-pad = 12;
+          line-height = 30;
+          fields = "name,generic,comment,exec";
+          icons-enabled = "yes";
         };
         colors = {
-          background = "${config.lib.stylix.colors.base00}e6"; # 90% opacity
-            text = "${config.lib.stylix.colors.base05}ff";
+          background = "${config.lib.stylix.colors.base00}d9"; # 85% opacity
+          text = "${config.lib.stylix.colors.base05}ff";
           match = "${config.lib.stylix.colors.base0D}ff";
           selection = "${config.lib.stylix.colors.base02}ff";
           selection-text = "${config.lib.stylix.colors.base05}ff";
           selection-match = "${config.lib.stylix.colors.base0D}ff";
-          border = "${config.lib.stylix.colors.base0D}ff";
+          border = "${config.lib.stylix.colors.base0D}59"; # 35% opacity for better visibility
+          prompt = "${config.lib.stylix.colors.base0D}ff";
+          placeholder = "${config.lib.stylix.colors.base04}ff";
+          counter = "${config.lib.stylix.colors.base04}ff";
+          input = "${config.lib.stylix.colors.base05}ff";
         };
         border = {
           width = 2;
           radius = 15;
+          selection-radius = 10;
         };
       };
     };
@@ -132,7 +124,8 @@
       pinentry.package = pkgs.pinentry-qt;
       defaultCacheTtl = 3600;
       maxCacheTtl = 86400;
-      enableSshSupport = false;
+      enableSshSupport = true;
+      enableZshIntegration = true;
     };
 
     ssh-agent.enable = false;
@@ -173,7 +166,7 @@
         keepassxc
         qbittorrent
         thunderbird
-        zettlr
+        sublime4
         loupe
         baobab
 
@@ -186,6 +179,7 @@
         playerctl
         networkmanagerapplet
         gemini-cli
+        swaybg
 
 # Development
         android-studio
@@ -210,21 +204,14 @@
     file = {
       ".config/niri".source = ./dotfiles/niri;
       ".config/waybar".source = ./dotfiles/waybar;
-      ".config/autostart/bitwarden.desktop".text = ''
-        [Desktop Entry]
-        Type=Application
-          Name=Bitwarden
-          Exec=bitwarden
-          Hidden=false
-          NoDisplay=false
-          X-GNOME-Autostart-enabled=true
-          '';
+      ".gnupg/sshcontrol".text = ''
+      134031545C93095D93D9484C9D957B1F6408C7C1
+      '';
     };
 
     sessionVariables = {
       EDITOR = "nvim";
       DEFAULT_BROWSER = "zen";
-      SSH_AUTH_SOCK = "$HOME/.bitwarden-ssh-agent.sock";
       GOPATH = "$HOME/go";
       ANDROID_HOME = "${config.android-sdk.path}";
       ANDROID_DATA = "${config.android-sdk.path}";

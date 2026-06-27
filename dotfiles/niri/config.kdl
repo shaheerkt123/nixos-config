@@ -1,7 +1,6 @@
 input {
     keyboard {
-        xkb {
-        }
+        xkb {}
         numlock
     }
 
@@ -24,17 +23,14 @@ layout {
     default-column-width { proportion 0.5; }
 
     focus-ring {
-        width 4
-        active-color "#7fc8ff"
-        inactive-color "#505050"
+        off
     }
 
     border {
-        off
-        width 4
-        active-color "#ffc87f"
-        inactive-color "#505050"
-        urgent-color "#9b0000"
+        width 2
+        active-color "#8aadf466"
+        inactive-color "#24273a66"
+        urgent-color "#ed879666"
     }
 
     shadow {
@@ -48,23 +44,17 @@ layout {
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "xhost" "+si:localuser:root"
 spawn-at-startup "nm-applet" "--indicator"
+spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/shaheer/nixos-config/wallpapers/Wind.png"
 
 prefer-no-csd
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 window-rule {
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
-}
- 
-window-rule {
-    // List all the apps you want to float here:
     match app-id="pavucontrol"
     match app-id="blueman-manager"
     match app-id="nm-connection-editor"
 
-    // Apply the floating rules to all of them at once
     open-floating true
     default-column-width { fixed 650; }
     default-window-height { fixed 550; }
@@ -75,6 +65,11 @@ window-rule {
     open-floating true
 }
 
+window-rule {
+    geometry-corner-radius 10 10 10 10
+    clip-to-geometry true
+}
+
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
@@ -83,7 +78,7 @@ binds {
     Mod+P { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
     Super+Alt+L { spawn "swaylock"; }
     Mod+B { spawn "zen"; }
-    Mod+N { spawn "zettlr"; }
+    Mod+N { spawn "subl"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
