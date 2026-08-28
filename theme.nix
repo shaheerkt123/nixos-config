@@ -3,6 +3,7 @@
 {
   stylix = {
     enable = true;
+    targets.qt.enable = true;
     image = ./wallpapers/Wind.png;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     polarity = "dark";
