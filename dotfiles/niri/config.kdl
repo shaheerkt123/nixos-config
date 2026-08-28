@@ -70,6 +70,10 @@ window-rule {
     clip-to-geometry true
 }
 
+hotkey-overlay {
+    skip-at-startup
+}
+
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
