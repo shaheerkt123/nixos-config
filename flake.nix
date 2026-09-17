@@ -30,6 +30,7 @@
     zen-browser.url = "github:youwen5/zen-browser-flake";
     prismlauncher-cracked.url = "github:Diegiwg/PrismLauncher-Cracked";
     stylix.url = "github:danth/stylix";
+    clin.url = "github:reekta92/clin-rs";
   };
 
   outputs = inputs@{ flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } ./modules;
