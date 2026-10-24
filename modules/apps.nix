@@ -19,6 +19,7 @@
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
       inputs.clin.packages.${pkgs.stdenv.hostPlatform.system}.default
       discord
+      kdePackages.merkuro
       tmux
       opencode
       pass
