@@ -1,6 +1,5 @@
 {
   description = "Nixos config flake";
-  # cache bust
 
   # configures the binary cache so we don't have to build from source
   nixConfig = {
@@ -10,8 +9,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    import-tree.url = "github:vic/import-tree";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -36,6 +33,30 @@
     clin.url = "github:reekta92/clin-rs";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; }
-    (inputs.import-tree ./modules);
+  outputs = { self, nixpkgs, ... }@inputs: {
+    nixosConfigurations = {
+      dendrite = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./configuration.nix
+          inputs.stylix.nixosModules.stylix
+          inputs.lanzaboote.nixosModules.lanzaboote
+          inputs.home-manager.nixosModules.default
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs; };
+              users.shaheer = {
+                imports = [ ./home.nix ];
+              };
+            };
+          }
+        ];
+      };
+      nixos = self.nixosConfigurations.dendrite;
+      default = self.nixosConfigurations.dendrite;
+    };
+  };
 }
